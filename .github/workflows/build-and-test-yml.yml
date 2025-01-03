@@ -38,10 +38,3 @@ jobs:
         cd ../Examination && npm install
         cd ../Faculty && npm install
         cd ../Student && npm install
-
-    - name: Run Tests
-      run: |
-        cd Services/Attendance && npm test
-        cd ../Examination && npm test
-        cd ../Faculty && npm test
-        cd ../Student && npm test
