@@ -35,8 +35,6 @@ jobs:
         docker push 20i1815/student:latest
 
     - name: Deploy to Kubernetes
-      env:
-        KUBECONFIG: ${{ secrets.KUBECONFIG }}
       run: |
         kubectl apply -f ./Services/Attendance/kubernetes.yaml
         kubectl apply -f ./Services/Examination/kubernetes.yaml
