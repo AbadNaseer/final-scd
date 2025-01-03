@@ -1,0 +1,44 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Docker
+      uses: docker/setup-buildx-action@v2
+
+    - name: Build Docker Images
+      run: |
+        docker build -t 20i1815/attendance:latest ./Services/Attendance
+        docker build -t 20i1815/examination:latest ./Services/Examination
+        docker build -t 20i1815/faculty:latest ./Services/Faculty
+        docker build -t 20i1815/student:latest ./Services/Student
+
+    - name: Push Docker Images
+      env:
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      run: |
+        echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+        docker push 20i1815/attendance:latest
+        docker push 20i1815/examination:latest
+        docker push 20i1815/faculty:latest
+        docker push 20i1815/student:latest
+
+    - name: Deploy to Kubernetes
+      env:
+        KUBECONFIG: ${{ secrets.KUBECONFIG }}
+      run: |
+        kubectl apply -f ./Services/Attendance/kubernetes.yaml
+        kubectl apply -f ./Services/Examination/kubernetes.yaml
+        kubectl apply -f ./Services/Faculty/kubernetes.yaml
+        kubectl apply -f ./Services/Student/kubernetes.yaml

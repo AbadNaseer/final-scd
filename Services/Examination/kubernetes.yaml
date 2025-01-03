@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: examination
+  labels:
+    app: examination
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: examination
+  template:
+    metadata:
+      labels:
+        app: examination
+    spec:
+      containers:
+      - name: examination
+        image: 20i1815/examination:latest
+        ports:
+        - containerPort: 3002
+        env:
+        - name: MONGO_URI
+          value: mongodb://mongodb://mongodb-service:27017/examination
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: examination
+spec:
+  selector:
+    app: examination
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 3002
+  type: ClusterIP

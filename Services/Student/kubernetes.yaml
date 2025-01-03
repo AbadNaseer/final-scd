@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: student
+  labels:
+    app: student
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: student
+  template:
+    metadata:
+      labels:
+        app: student
+    spec:
+      containers:
+      - name: student
+        image: 20i1815/faculty:latest
+        ports:
+        - containerPort: 3004
+        env:
+        - name: MONGO_URI
+          value: mongodb://mongodb://mongodb-service:27017/student
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: student
+spec:
+  selector:
+    app: student
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 3004
+  type: ClusterIP

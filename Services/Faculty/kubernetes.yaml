@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: faculty
+  labels:
+    app: faculty
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: faculty
+  template:
+    metadata:
+      labels:
+        app: faculty
+    spec:
+      containers:
+      - name: faculty
+        image: 20i1815/faculty:latest
+        ports:
+        - containerPort: 3003
+        env:
+        - name: MONGO_URI
+          value: mongodb://mongodb://mongodb-service:27017/faculty
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: faculty
+spec:
+  selector:
+    app: faculty
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 3003
+  type: ClusterIP
